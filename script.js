@@ -12,10 +12,10 @@ const showWeekDays = function() {
         
         switch (i) {
             case date:
-                weekDaysElem.style.fontStyle = 'italic';
+                weekDaysElem.style.fontWeight = 'bold';
             case 0:
             case 6:
-                weekDaysElem.style.fontWeight = 'bold';
+                weekDaysElem.style.fontStyle = 'italic';
                 weekDaysElem.after(document.getElementById(0));
         }
     }
