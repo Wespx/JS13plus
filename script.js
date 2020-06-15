@@ -4,6 +4,11 @@ let isNumber = function(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 };
 
+let valid = function(str) {
+	const nameReg = /^[,а-яА-ЯёЁ\s]+$/;
+	return nameReg.test(str);
+};
+
 let money;
 let start = function() {
     do {
@@ -34,7 +39,7 @@ let appData = {
 
             do {
                 itemIncome = prompt('Какой у вас дополнительный заработок?', 'Таксую');
-            } while (!itemIncome.trim() || isNumber(itemIncome));
+            } while (!valid(itemIncome.trim()));
             
             do {
                 cashIncome = prompt('Сколько в месяц вы на этом зарабатываете?', '10000');
@@ -47,7 +52,7 @@ let appData = {
         
         do {
             addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую', 'Еда, вода');
-        } while (!addExpenses.trim() || isNumber(addExpenses));
+        } while (!valid(addExpenses.trim()));
 
         appData.addExpenses = addExpenses.toLowerCase().split(', ');
 
@@ -59,7 +64,7 @@ let appData = {
             
             do {
                 key = prompt('Введите обязательную статью расходов?', 'Интернет');
-            } while (!key.trim() || isNumber(key));
+            } while (!valid(key.trim()));
             
             do {
                 howMuch = prompt('Во сколько это обойдется?', '1000');
