@@ -1,5 +1,29 @@
 'use strict';
 
+const startButton = document.getElementById('start');
+const addIncomeButton = document.getElementsByTagName('button')[0];
+const addExpenseButton = document.getElementsByTagName('button')[1];
+const depositCheckbox = document.querySelector('#deposit-check');
+const addIncomeInputs = document.querySelectorAll('additional_income-item');
+const budgetMonthValue = document.getElementsByClassName('budget_month-value')[0];
+const budgetDayValue = document.getElementsByClassName('budget_day-value')[0];
+const expensesMonthValue = document.getElementsByClassName('expenses_month-value')[0];
+const addIncomeValue = document.getElementsByClassName('additional_income-value')[0];
+const addExpensesValue = document.getElementsByClassName('additional_expenses-value')[0];
+const periodValue = document.getElementsByClassName('income_period-value')[0];
+const targetMonthValue = document.getElementsByClassName('target_month-value')[0];
+const salaryInput = document.querySelector('.salary-amount');
+const incomeTitleInput = document.querySelector('.income-title');
+const incomeAmountInput = document.querySelector('.income-amount');
+const addIncomeItem1 = document.querySelectorAll('.additional_income-item')[0];
+const addIncomeItem2 = document.querySelectorAll('.additional_income-item')[1];
+const expensesTitleInput = document.querySelector('.expenses-title');
+const expensesAmountInput = document.querySelector('.expenses-amount');
+const addExpensesInput = document.querySelector('.additional_expenses-item');
+const targetAmountInput = document.querySelector('.target-amount');
+const periodSelectInput = document.querySelector('.period-select');
+
+
 let isNumber = function(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 };
