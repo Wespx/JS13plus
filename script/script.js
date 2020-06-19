@@ -202,14 +202,17 @@ salaryInput.addEventListener('input', function() {
 
 dataBlock.addEventListener('input', function(event) {
     const target = event.target;
-    const placeholder = target.attributes.placeholder.textContent;
-    
-    if (placeholder === 'Сумма') { 
-        target.value = target.value.replace(/[^\d]/g, '');
-    }
 
-    if (placeholder === 'Наименование') {  
-        target.value = target.value.replace(/[^,.;:а-яА-ЯёЁ\s]+$/, '');
+    if (target.hasAttribute('placeholder')) {
+        const placeholder = target.attributes.placeholder.textContent;
+        
+        if (placeholder === 'Сумма') { 
+            target.value = target.value.replace(/[^\d]/g, '');
+        }
+
+        if (placeholder === 'Наименование') {  
+            target.value = target.value.replace(/[^,.;:а-яА-ЯёЁ\s]+$/, '');
+        }
     }
 });
 
