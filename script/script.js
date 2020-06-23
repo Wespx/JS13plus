@@ -45,6 +45,10 @@ let appData = {
     budgetMonth: 0,
     expensesMonth: 0,
     start: function() {
+        this.toggleDisabled();
+        startButton.style.display = 'none';
+        cancelButton.style.display = 'block';
+        
         this.budget = +salaryInput.value;
 
         this.getExpenses();
@@ -55,17 +59,24 @@ let appData = {
         this.getBudget();
 
         this.showResult();
-
-        startButton.style.display = 'none';
-        cancelButton.style.display = 'block';
     },
     reset: function() {
         const inputs = dataBlock.querySelectorAll('[type="text"]');
+        const resultInputs = document.querySelectorAll('input');
         
         inputs.forEach(function(input) {
             input.value = '';
         });
 
+        resultInputs.forEach(function(input) {
+            input.value = '';
+        });
+
+        periodSelectInput.value = 1;
+        periodSelectTitle.textContent = '1';
+
+        this.toggleDisabled();
+        
         this.income = {};
         this.incomeMonth = 0;
         this.addIncome = [];
@@ -78,9 +89,6 @@ let appData = {
         this.budgetDay = 0;
         this.budgetMonth = 0;
         this.expensesMonth = 0;
-
-        this.showResult();
-        targetMonthValue.value = '';
 
         incomeItems = document.getElementsByClassName('income-items');
         while (incomeItems.length > 1) {
@@ -100,6 +108,18 @@ let appData = {
         cancelButton.style.display = 'none';
         startButton.style.display = 'block';
         startButton.setAttribute('disabled', '');
+    },
+    toggleDisabled: function() {
+        const inputs = dataBlock.querySelectorAll('[type="text"], [type="checkbox"]');
+        const buttons = dataBlock.querySelectorAll('button');
+        
+        inputs.forEach(function(input) {
+            input.toggleAttribute('disabled');
+        });
+
+        buttons.forEach(function(button) {
+            button.toggleAttribute('disabled');
+        });
     },
     showResult: function() {
         budgetMonthValue.value = this.budgetMonth;
