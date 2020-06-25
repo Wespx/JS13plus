@@ -27,7 +27,7 @@ const dataBlock = document.querySelector('.data');
 let expensesItems = document.querySelectorAll('.expenses-items');
 let incomeItems = document.querySelectorAll('.income-items');
 
-let isNumber = function(n) {
+const isNumber = function(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 };
 
@@ -47,6 +47,9 @@ const AppData = function () {
 };
 
 AppData.prototype.start = function() {
+    this.copy = Object.assign({}, this);
+    
+    console.log(this.copy);
     this.toggleDisabled();
     startButton.style.display = 'none';
     cancelButton.style.display = 'block';
@@ -79,19 +82,10 @@ AppData.prototype.reset = function() {
     periodSelectTitle.textContent = '1';
 
     this.toggleDisabled();
-    
-    this.income = {};
-    this.incomeMonth = 0;
-    this.addIncome = [];
-    this.expenses = {};
-    this.addExpenses = [];
-    this.deposit = false;
-    this.percentDeposit = 0;
-    this.moneyDeposit = 0;
-    this.budget = 0;
-    this.budgetDay = 0;
-    this.budgetMonth = 0;
-    this.expensesMonth = 0;
+
+    for (let key in this.copy) {
+        this[key] = this.copy[key];
+    }
 
     incomeItems = document.getElementsByClassName('income-items');
     while (incomeItems.length > 1) {
@@ -311,6 +305,8 @@ AppData.prototype.eventsListeners = function() {
 };
 
 const appData = new AppData();
+
+
 appData.eventsListeners();
 
 
