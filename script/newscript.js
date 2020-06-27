@@ -58,9 +58,8 @@ class AppData {
         this.budget = +salaryInput.value;
     
         this.getExpInc();
+        this.getAdd();
         this.getExpensesMonth();
-        this.getAddExpenses();
-        this.getAddIncome();
         this.getInfoDeposit();
         this.getBudget();
     
@@ -82,7 +81,7 @@ class AppData {
 
         depositInputs.forEach((input) => {
             input.style.display = 'none';
-        })
+        });
 
         periodSelectInput.value = 1;
         periodSelectTitle.textContent = '1';
@@ -141,29 +140,20 @@ class AppData {
         });
     }
 
-    addIncomeBlock() {
-        const cloneIncomeItem = incomeItems[0].cloneNode(true);
-        cloneIncomeItem.querySelector('.income-title').value = '';
-        cloneIncomeItem.querySelector('.income-amount').value = '';
-        incomeItems[0].parentNode.insertBefore(cloneIncomeItem, addIncomeButton);
+    addBlock(typeOfBlock) {
+        let items = typeOfBlock === 'income' ? incomeItems : expensesItems;
+        const button = typeOfBlock === 'income' ? addIncomeButton : addExpenseButton;
+        const clone = items[0].cloneNode(true);
+        const parent = items[0].parentNode;
 
-        incomeItems = document.querySelectorAll('.income-items');
+        clone.querySelector(`.${typeOfBlock}-title`).value = '';
+        clone.querySelector(`.${typeOfBlock}-amount`).value = '';
+        parent.insertBefore(clone, button);
 
-        if (incomeItems.length === 3) {
-            addIncomeButton.style.display = 'none';
-        }
-    }
+        items = document.querySelectorAll(`.${typeOfBlock}-items`);
 
-    addExpensesBlock() {
-        const cloneExpensesItem = expensesItems[0].cloneNode(true);
-        cloneExpensesItem.querySelector('.expenses-title').value = '';
-        cloneExpensesItem.querySelector('.expenses-amount').value = '';
-        expensesItems[0].parentNode.insertBefore(cloneExpensesItem, addExpenseButton);
-
-        expensesItems = document.querySelectorAll('.expenses-items');
-
-        if (expensesItems.length === 3) {
-            addExpenseButton.style.display = 'none';
+        if (items.length === 3) {
+            button.style.display = 'none';
         }
     }
 
@@ -185,23 +175,30 @@ class AppData {
         }
     }
 
-    getAddExpenses() {
+    getAdd() {
         const addExpenses = addExpensesItem.value.split(',');
-        addExpenses.forEach((item) => {
-            item = item.trim();
-            if (item !== '') {
-                this.addExpenses.push(item);
-            }
+        const addIncomes = [];
+        
+        addIncomeInputs.forEach(item => {
+            addIncomes.push(item.value.trim());
         });
-    }
 
-    getAddIncome() {
-        addIncomeInputs.forEach((item) => {
-            const itemValue = item.value.trim();
-            if (itemValue !== '') {
-                this.addIncome.push(itemValue);
-            }
-        });
+        const getAddIncExp = (arr) => {
+            arr.forEach(item => {
+                if (item !== '') {
+                    if (arr === addExpenses) {
+                        this.addExpenses.push(item);
+                    }
+
+                    if (arr === addIncomes) {
+                        this.addIncome.push(item);
+                    }
+                }
+            });
+        };
+
+        getAddIncExp(addExpenses);
+        getAddIncExp(addIncomes);
     }
 
     getExpensesMonth() {
@@ -213,8 +210,8 @@ class AppData {
     }
 
     getBudget() {
-        const monthDeposit = this.moneyDeposit * (this.percentDeposit / 100);
-        this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth + monthDeposit;
+        const monthDeposit = Math.ceil(this.moneyDeposit * (this.percentDeposit / 100));
+        this.budgetMonth = Math.ceil(this.budget + this.incomeMonth - this.expensesMonth + monthDeposit);
         this.budgetDay = Math.ceil(this.budgetMonth / 30);
     }
 
@@ -282,8 +279,8 @@ class AppData {
     eventsListeners () {
         startButton.addEventListener('click', this.start.bind(this));
 
-        addIncomeButton.addEventListener('click', this.addIncomeBlock.bind(this));
-        addExpenseButton.addEventListener('click', this.addExpensesBlock.bind(this));
+        addIncomeButton.addEventListener('click', this.addBlock.bind(this, 'income'));
+        addExpenseButton.addEventListener('click', this.addBlock.bind(this, 'expenses'));
 
         periodSelectInput.addEventListener('input', () => {
             periodSelectTitle.textContent = periodSelectInput.value;
