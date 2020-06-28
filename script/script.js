@@ -36,18 +36,18 @@ const isNumber = (n) => {
 
 class AppData {
     constructor () {
-    this.income = {};
-    this.incomeMonth = 0;
-    this.addIncome = [];
-    this.expenses = {};
-    this.addExpenses = [];
-    this.deposit = false;
-    this.percentDeposit = 0;
-    this.moneyDeposit = 0;
-    this.budget = 0;
-    this.budgetDay = 0;
-    this.budgetMonth = 0;
-    this.expensesMonth = 0;
+        this.income = {};
+        this.incomeMonth = 0;
+        this.addIncome = [];
+        this.expenses = {};
+        this.addExpenses = [];
+        this.deposit = false;
+        this.percentDeposit = 0;
+        this.moneyDeposit = 0;
+        this.budget = 0;
+        this.budgetDay = 0;
+        this.budgetMonth = 0;
+        this.expensesMonth = 0;
     }
 
     start() {
@@ -62,6 +62,7 @@ class AppData {
         this.getExpensesMonth();
         this.getInfoDeposit();
         this.getBudget();
+        this.addStorageCookies();
     
         this.showResult();
     }
@@ -111,6 +112,8 @@ class AppData {
         cancelButton.style.display = 'none';
         startButton.style.display = 'block';
         startButton.setAttribute('disabled', '');
+        
+        localStorage.clear();
     }
 
     toggleDisabled() {
@@ -130,8 +133,12 @@ class AppData {
         budgetMonthValue.value = this.budgetMonth;
         budgetDayValue.value = this.budgetDay;
         expensesMonthValue.value = this.expensesMonth;
-        addExpensesValue.value = this.addExpenses.join(', ');
-        addIncomeValue.value = this.addIncome.join(', ');
+        addExpensesValue.value = typeof this.addExpenses === 'object' ? 
+                                this.addExpenses.join(', ') :
+                                this.addExpenses;
+        addIncomeValue.value = typeof this.addIncome === 'object' ?
+                                this.addIncome.join(', ') :
+                                this.addIncome;
         targetMonthValue.value = Math.ceil(this.getTargetMonth());
         periodValue.value = this.calcPeriod();
 
@@ -210,13 +217,13 @@ class AppData {
     }
 
     getBudget() {
-        const monthDeposit = Math.ceil(this.moneyDeposit * (this.percentDeposit / 100));
+        const monthDeposit = Math.ceil(this.moneyDeposit * (this.percentDeposit / 100) / 12);
         this.budgetMonth = Math.ceil(this.budget + this.incomeMonth - this.expensesMonth + monthDeposit);
         this.budgetDay = Math.ceil(this.budgetMonth / 30);
     }
 
     getTargetMonth() {
-        return targetAmountInput.value / this.budgetMonth;
+        return targetAmountInput.value / this.budgetMonth || localStorage.getItem('targetAmount') / this.budgetMonth;
     }
 
     getStatusIncome() {
@@ -276,6 +283,87 @@ class AppData {
         }
     }
 
+    addStorageCookies() {
+        let date = new Date(Date.now() + 86400e3);
+        date = date.toUTCString();
+        
+        for (let key in this) {
+            if (key !== 'income' && key !== 'expenses') {
+                localStorage.setItem(key, this[key]);
+                document.cookie = `${key}=${this[key]}; expires=${date}`;
+            }
+        }
+
+        localStorage.setItem('targetAmount', targetAmountInput.value);
+        document.cookie = `targetAmount=${targetAmountInput.value}; expires=${date}`;
+        document.cookie = `isLoad=true; expires=${date}`;
+    }
+
+    compareStorageCookies() {
+        const cookieArr = document.cookie.split(';');
+        const cookieObj = {};
+
+        const deleteCookie = () => {
+            for (let i = 0; i < cookieArr.length; i++) {
+                const cookie = cookieArr[i];
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+                document.cookie = name + '=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            }
+        };
+
+        cookieArr.forEach((item) => {
+            const itemArr = item.split('=');
+            cookieObj[itemArr[0].trim()] = itemArr[1];
+        });
+
+        for (let key in cookieObj) {
+            if (key === 'isLoad') {
+                continue; 
+            } 
+            
+            if  (cookieObj[key] !== localStorage.getItem(key) || !cookieObj.hasOwnProperty('isLoad')) {
+                localStorage.clear();
+                deleteCookie();
+                return;
+            }
+        }
+
+        for (let key in localStorage) {
+            if (!localStorage.hasOwnProperty(key)) {
+              continue;
+            }
+
+            if  (localStorage.getItem(key) !== cookieObj[key]) {
+                localStorage.clear();
+                deleteCookie();
+                return;
+            }
+          }
+
+        this.handleStorage();
+    }
+
+    handleStorage() {
+        const objKeys = Object.keys(this);
+        
+        for(let key in localStorage) {
+            if (!localStorage.hasOwnProperty(key)) {
+                continue; 
+            }
+
+            this[objKeys[objKeys.indexOf(key)]] = localStorage.getItem(key);
+        }
+
+        targetMonthValue.value = Math.ceil(this.getTargetMonth());
+
+        this.toggleDisabled();
+        startButton.style.display = 'none';
+        cancelButton.style.display = 'block';
+        this.showResult();
+    }
+
     eventsListeners () {
         startButton.addEventListener('click', this.start.bind(this));
 
@@ -322,6 +410,10 @@ class AppData {
                 depositPercent.value = '';
             }
         });
+
+        window.addEventListener('load', () => {
+            this.compareStorageCookies();
+        });
     }
 }
 
@@ -330,6 +422,3 @@ const copy = Object.assign({}, new AppData());
 
 
 appData.eventsListeners();
-
-
-
