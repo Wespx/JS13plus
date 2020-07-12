@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heroes</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <h1 class="main-title">Герои</h1>
+
+    <div id="filter">
+        <fieldset>
+            <legend>Пол</legend>
+            <input id="choose-gender1" name="choose-gender" type="radio" value="any" checked="">
+            <label for="choose-gender1">Любой</label>
+            <br>
+            <input id="choose-gender2" name="choose-gender" type="radio" value="male">
+            <label for="choose-gender2">Мужской</label>
+            <br>
+            <input id="choose-gender3" name="choose-gender" type="radio" value="female">
+            <label for="choose-gender3">Женский</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Статус</legend>
+            <input id="choose-status1" name="choose-status" type="radio" value="any" checked="">
+            <label for="choose-status1">Любой</label>
+            <br>
+            <input id="choose-status2" name="choose-status" type="radio" value="alive">
+            <label for="choose-status2">Жив</label>
+            <br>
+            <input id="choose-status3" name="choose-status" type="radio" value="deceased">
+            <label for="choose-status3">Мертв</label>
+            <br>
+            <input id="choose-status4" name="choose-status" type="radio" value="unknown">
+            <label for="choose-status4">Неизвестен</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Раса</legend>
+            <input id="choose-race1" name="choose-race" type="radio" value="any" checked="">
+            <label for="choose-race1">Любая</label>
+            <br>
+            <input id="choose-race2" name="choose-race" type="radio" value="human">
+            <label for="choose-race2">Человек</label>
+            <br>
+            <input id="choose-race3" name="choose-race" type="radio" value="other">
+            <label for="choose-race3">Другая</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Гражданство</legend>
+            <input id="choose-citizenship1" name="choose-citizenship" type="radio" value="any" checked="">
+            <label for="choose-citizenship1">Любое</label>
+            <br>
+            <input id="choose-citizenship2" name="choose-citizenship" type="radio" value="American">
+            <label for="choose-citizenship2">США</label>
+            <br>
+            <input id="choose-citizenship3" name="choose-citizenship" type="radio" value="Soviet">
+            <label for="choose-citizenship3">СССР</label>
+            <br>
+            <input id="choose-citizenship2" name="choose-citizenship" type="radio" value="British">
+            <label for="choose-citizenship2">Великобритания</label>
+            <br>
+            <input id="choose-citizenship3" name="choose-citizenship" type="radio" value="other">
+            <label for="choose-citizenship3">Другое</label>
+        </fieldset>
+    </div>
+    
+    <div id="container">
+    </div>
+</body>
+</html>
