@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Переводчик</title>
+    <style>
+        .container {
+            display: flex;
+            flex-flow: row wrap;
+        }
+
+        .middle-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+        }
+
+        #choose {
+            margin-bottom: 20px;
+        }
+
+        #button {
+            border: none;
+            padding: 10px;
+            background-color: lightgreen;
+            cursor: pointer;
+        }
+
+        .result {
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .result-label {
+            font-size: 10px;
+        }
+    </style>
+
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <textarea name="input" id="input" cols="70" rows="20"></textarea>
+        <div class="middle-column">
+            <select name="choose" id="choose">
+                <option value="ru-en">Русский -> Английский</option>
+                <option value="en-ru">Английский -> Русский</option>
+            </select>
+            <button type="button" id="button">Перевести</button>
+        </div>
+        <div class="result">
+            <label class="result-label" for="output">Переведено сервисом <a href="http://translate.yandex.ru" target="_blank">Яндекс.переводчик</a></label>
+            <textarea name="output" id="output" cols="70" rows="20" disabled></textarea>
+        </div>
+    </div>
+</body>
+</html>
