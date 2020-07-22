@@ -1,28 +1,4 @@
 window.addEventListener('DOMContentLoaded', () => {
-    const main = document.querySelector('.main');
-    const preloader = document.getElementById('preloader');
-    main.style.display = 'none';
-    preloader.style.display = 'block';
-    const getData = () => fetch('./db_cities.json');
-
-    getData()
-        .then(response => {
-            if (response.status !== 200) {
-                throw new Error('Status: not 200');
-            } else {
-                return response.json();
-            }
-        })
-        .then(data => {
-            cityApp(data);
-            main.style.display = '';
-            preloader.style.display = 'none';
-        })
-        .catch(error => {
-            console.error(error);
-            preloader.textContent = 'Произошла ошибка';
-        });
-
     const cityApp = (data) => {
         const input = document.getElementById('select-cities');
         const defaultList = document.querySelector('.dropdown-lists__list--default');
@@ -40,7 +16,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const getDefaultListData = () => {
             const countries = [];
 
-            for (const item of data.RU) {
+            for (const item of data) {
                 const block = [];
                 block.push({
                     'country': item.country,
@@ -67,7 +43,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const getSelectListData = country => {
             let countryInfo;
             
-            for (const item of data.RU) {
+            for (const item of data) {
                 if (item.country === country) {
                     countryInfo = item;
                 }
@@ -80,7 +56,7 @@ window.addEventListener('DOMContentLoaded', () => {
             input = input.toLowerCase();
             const matches = [];
             
-            for (const item of data.RU) {
+            for (const item of data) {
                 const countryMatch = item.country.substring(0, (input.length));
                 const countryMatchLower = countryMatch.toLowerCase();
                 
@@ -332,7 +308,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 target.querySelector('.dropdown-lists__country').textContent :
                 target.querySelector('.dropdown-lists__city').textContent;
 
-                for (const item of data.RU) {
+                for (const item of data) {
                     for (const city of item.cities) {
                         if (value === city.name) {
                             button.setAttribute('href', city.link);
@@ -356,4 +332,133 @@ window.addEventListener('DOMContentLoaded', () => {
             button.classList.add('disabled');
         });
     };
+    
+    const init = () => {
+        let locale = document.cookie.slice(-2);
+        let appData = JSON.parse(localStorage.getItem('localeData'));
+        
+        const label = document.querySelector('.label');
+        const button = document.querySelector('.button');
+        const main = document.querySelector('.main');
+        const preloader = document.getElementById('preloader');
+
+        if (!appData || !locale) {
+            main.style.display = 'none';
+            preloader.style.display = 'block';
+            
+            let date = new Date(Date.now() + 86400e3);
+            date = date.toUTCString();
+
+            do {
+                locale = prompt(`
+                Выберите язык/
+                Choose language/
+                Wahlen Sie Sprache: 
+                для русского языка введите RU;
+                for English enter EN;
+                fuer Deutsch eingeben DE`, 'RU');
+            } while (locale !== 'RU' && locale !== 'EN' && locale !== 'DE');
+
+            document.cookie = `locale=${locale}; expires=${date}`;
+
+            const sendLocale = () => {
+                return fetch('./server.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/html; charset=utf-8'
+                    },
+                    body: locale
+                });
+            };
+
+            const getData = () => fetch('./db_cities.json')
+                .then(response => {
+                    if (response.status !== 200) {
+                        throw new Error('Status: not 200');
+                    } else {
+                        return response.json();
+                    }
+                })
+                .then(data => {
+                    const sortedData = [];
+
+                    if (locale === 'RU') {
+                        sortedData.push(data[locale].find(elem => elem.country === 'Россия'));
+                        data[locale].forEach(elem => {
+                            if (elem !== data[locale].find(elem => elem.country === 'Россия')) {
+                                sortedData.push(elem);
+                            }
+                        })
+                    }
+
+                    if (locale === 'EN') {
+                        sortedData.push(data[locale].find(elem => elem.country === 'United Kingdom'));
+                        data[locale].forEach(elem => {
+                            if (elem !== data[locale].find(elem => elem.country === 'United Kingdom')) {
+                                sortedData.push(elem);
+                            }
+                        })
+                    }
+
+                    if (locale === 'DE') {
+                        sortedData.push(data[locale].find(elem => elem.country === 'Deutschland'));
+                        data[locale].forEach(elem => {
+                            if (elem !== data[locale].find(elem => elem.country === 'Deutschland')) {
+                                sortedData.push(elem);
+                            }
+                        })
+                    }
+                    
+                    localStorage.setItem('localeData', JSON.stringify(sortedData));
+                    cityApp(sortedData);
+                    main.style.display = '';
+                    preloader.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error(error);
+                    preloader.textContent = `
+                    Произошла ошибка/
+                    Something went wrong/
+                    Fehler`;
+                });
+
+            sendLocale()
+                .then(response => {
+                    if (response.status !== 200) {
+                        throw new Error('Status: not 200');
+                    } else {
+                        return response;
+                    }
+                })
+                .then(response => getData())
+                .catch(error => {
+                    console.error(error);
+                    preloader.textContent = `
+                    Произошла ошибка/
+                    Something went wrong/
+                    Fehler`;
+                });
+        } else {
+            cityApp(appData);
+            main.style.display = '';
+            preloader.style.display = 'none';
+        }
+
+        if (locale === 'RU') {
+            label.textContent = 'Страна или город';
+            button.textContent = 'Перейти';
+        }
+
+        if (locale === 'EN') {
+            label.textContent = 'Country or city';
+            button.textContent = 'Go to';
+        }
+
+        if (locale === 'DE') {
+            label.textContent = 'Land oder Stadt';
+            button.textContent = 'Gehe zu';
+        }
+    };
+
+    init();
 });
